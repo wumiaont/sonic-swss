@@ -557,6 +557,41 @@ int main(int argc, char **argv)
     attr.value.ptr = (void *)on_switch_shutdown_request;
     attrs.push_back(attr);
 
+    /*Check if FIPS is enabled*/
+    Table m_state_fips_table(&state_db, "FIPS_STATS");
+    std::vector<FieldValueTuple> values;
+    if (!m_state_fips_table.get("state", values))
+    {
+        SWSS_LOG_ERROR("FIPS state does not exist");
+        exit(EXIT_FAILURE);
+    }
+
+    std::string fips_enabled;
+    for (auto i: values)
+    {
+        if (fvField(i) == "enabled")
+        {
+            fips_enabled = fvValue(i);
+            break;
+        }
+    }
+    bool enabled = (fips_enabled == "True")?true:false;
+    if (enabled)
+    {
+        //attr.id = SAI_SWITCH_ATTR_MACSEC_ENABLE_POST;
+        //attr.value.booldata = true;
+        //attrs.push_back(attr);        
+        SWSS_LOG_WARN("wumiao Enabled FIPS MACSEC POST test.");
+
+        attr.id = SAI_SWITCH_ATTR_SWITCH_MACSEC_POST_STATUS_NOTIFY;
+        attr.value.ptr = (void *)on_switch_macsec_post_status;
+        attrs.push_back(attr);
+
+        attr.id = SAI_SWITCH_ATTR_MACSEC_POST_STATUS_NOTIFY;
+        attr.value.ptr = (void *)on_macsec_post_status;
+        attrs.push_back(attr);
+    }
+
     if (gMySwitchType != "fabric" && gMacAddress)
     {
         attr.id = SAI_SWITCH_ATTR_SRC_MAC_ADDRESS;

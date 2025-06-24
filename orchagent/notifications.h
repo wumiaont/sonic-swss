@@ -11,7 +11,8 @@ void on_bfd_session_state_change(uint32_t count, sai_bfd_session_state_notificat
 void on_twamp_session_event(uint32_t count, sai_twamp_session_event_notification_data_t *data);
 void on_ha_set_event(uint32_t count, sai_ha_set_event_data_t *data);
 void on_ha_scope_event(uint32_t count, sai_ha_scope_event_data_t *data);
-
+void on_switch_macsec_post_status(sai_object_id_t switch_id, sai_switch_macsec_post_status_t switch_macsec_post_status);
+void on_macsec_post_status(sai_object_id_t switch_id, sai_macsec_post_status_t macsec_post_status);
 // The function prototype information can be found here:
 //      https://github.com/sonic-net/sonic-sairedis/blob/master/meta/NotificationSwitchShutdownRequest.cpp#L49
 void on_switch_shutdown_request(sai_object_id_t switch_id);
