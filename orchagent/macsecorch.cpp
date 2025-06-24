@@ -17,6 +17,8 @@
 #include <byteswap.h>
 #include <cstdint>
 
+#include "notifications.h"
+
 /* Global Variables*/
 
 #define AVAILABLE_ACL_PRIORITIES_LIMITATION             (32)
@@ -1032,6 +1034,10 @@ bool MACsecOrch::initMACsecObject(sai_object_id_t switch_id)
     attr.value.booldata = true;
     attrs.push_back(attr);
 
+    attr.id = SAI_MACSEC_ATTR_ENABLE_POST;
+    attr.value.booldata = true;
+    attrs.push_back(attr);  
+    SWSS_LOG_WARN("wumiao initMACsecObject SAI_MACSEC_ATTR_ENABLE_POST");
     sai_status_t status = sai_macsec_api->create_macsec(
                                 &macsec_obj.first->second.m_egress_id,
                                 switch_id,
