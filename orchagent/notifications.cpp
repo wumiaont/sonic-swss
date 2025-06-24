@@ -36,13 +36,13 @@ void on_twamp_session_event(uint32_t count, sai_twamp_session_event_notification
     // which causes concurrency access to the DB
 }
 
-void on_switch_macsec_post_status(_sai_switch_macsec_post_status_t *data)
+void on_switch_macsec_post_status(sai_object_id_t switch_id, sai_switch_macsec_post_status_t switch_macsec_post_status)
 {
     SWSS_LOG_ENTER();
-    SWSS_LOG_ERROR("wumiao swss on_switch_macsec_post_status");
+    SWSS_LOG_ERROR("wumiao swss on_switch_macsec_post_status %s, %d", sai_serialize_object_id(switch_id).c_str(), switch_macsec_post_status);
 }
 
-void on_macsec_post_status(_sai_macsec_post_status_t *data)
+void on_macsec_post_status(sai_object_id_t switch_id, sai_macsec_post_status_t macsec_post_status)
 {
     SWSS_LOG_ENTER();
     SWSS_LOG_ERROR("wumiao swss on_macsec_post_status");
