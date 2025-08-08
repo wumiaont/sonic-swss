@@ -82,8 +82,20 @@ void on_ha_scope_event(uint32_t count, sai_ha_scope_event_data_t *data)
 
 void on_switch_macsec_post_status(_sai_switch_macsec_post_status_t *data)
 {
+    std::string result = "";
     SWSS_LOG_ENTER();
-    SWSS_LOG_ERROR("wumiao swss on_switch_macsec_post_status");
+    SWSS_LOG_ERROR("wumiao swss on_switch_macsec_post_status %s, %d", sai_serialize_object_id(switch_id).c_str(), switch_macsec_post_status);
+    if(switch_macsec_post_status == SAI_SWITCH_MACSEC_POST_STATUS_PASS) {
+        SWSS_LOG_NOTICE("FIPS MACSEC POST test passed!");
+        result = "passed";
+    } else {
+        SWSS_LOG_ERROR("FIPS MACSEC POST test failed!!! All secure associate APIs are disabled.");
+        result = "failed";
+    }
+    // Save the test result to state db
+    DBConnector state_db("STATE_DB", 0);
+    Table m_state_fips_table(&state_db, "FIPS_STATS");
+    m_state_fips_table.set("state", {{"macsec_post_result", result.c_str()}});
 }
 
 void on_macsec_post_status(_sai_macsec_post_status_t *data)

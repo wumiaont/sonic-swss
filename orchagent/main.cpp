@@ -578,18 +578,15 @@ int main(int argc, char **argv)
     bool enabled = (fips_enabled == "True")?true:false;
     if (enabled)
     {
-        //attr.id = SAI_SWITCH_ATTR_MACSEC_ENABLE_POST;
-        //attr.value.booldata = true;
-        //attrs.push_back(attr);        
+        attr.id = SAI_SWITCH_ATTR_MACSEC_ENABLE_POST;
+        attr.value.booldata = true;
+        attrs.push_back(attr);        
         SWSS_LOG_WARN("wumiao Enabled FIPS MACSEC POST test.");
 
         attr.id = SAI_SWITCH_ATTR_SWITCH_MACSEC_POST_STATUS_NOTIFY;
         attr.value.ptr = (void *)on_switch_macsec_post_status;
         attrs.push_back(attr);
 
-        attr.id = SAI_SWITCH_ATTR_MACSEC_POST_STATUS_NOTIFY;
-        attr.value.ptr = (void *)on_macsec_post_status;
-        attrs.push_back(attr);
     }
 
     if (gMySwitchType != "fabric" && gMacAddress)

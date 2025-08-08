@@ -41,6 +41,36 @@ static void sig_handler(int signo)
     return;
 }
 
+bool check_fips_post_status(swss::DBConnector* stateDb) {
+    Table m_state_fips_table(stateDb, "FIPS_STATS");
+    std::vector<FieldValueTuple> values;
+    bool rt = true;
+    if (!m_state_fips_table.get("state", values))
+    {
+        SWSS_LOG_ERROR("FIPS state does not exist");
+        return false;
+    }
+    std::string fips_post_result;
+    std::string fips_enabled;
+    for (auto i: values)
+    {
+        if (fvField(i) == "macsec_post_result")
+        {
+            fips_post_result = fvValue(i);
+        }
+        if (fvField(i) == "enabled")
+        {
+            fips_enabled = fvValue(i);
+        }
+    }
+    bool enabled = (fips_enabled == "True")?true:false;
+    bool passed = (fips_post_result == "passed")?true:false;
+    if (enabled && !passed)
+        rt = false;
+    SWSS_LOG_ERROR("fips_enabled %d passed %d", enabled, passed);
+    return rt;
+}
+
 int main(int argc, char **argv)
 {
 
@@ -86,6 +116,13 @@ int main(int argc, char **argv)
             if (ret == Select::ERROR)
             {
                 SWSS_LOG_NOTICE("Error: %s!", strerror(errno));
+                continue;
+            }
+            if (!check_fips_post_status(&stateDb))
+            {
+                // FIPS is enabled but post test failed.
+                // Skip any macsec handling.
+                SWSS_LOG_ERROR("macsecmgrd main post failed!!!");
                 continue;
             }
             if (ret == Select::TIMEOUT)
